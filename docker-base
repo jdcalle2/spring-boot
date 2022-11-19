@@ -1,0 +1,86 @@
+Creado la base de datos:
+docker-compose up -d
+
+#Esto es un comentario en YAML
+
+#Valores asociativos
+identificacion:
+  nombres: Daniel
+	apellido: Calle
+
+#una lista
+mascotas:
+ - Perro
+- Gato
+
+version: "3.8"
+services:
+  dbpostgres:
+    container_name: postgres
+    image: postgres:12.1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORRD=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - red
+    ports:
+      - "5433:5432"
+volumes:
+  db-data:
+	  driver: local
+networks:
+  red:
+    driver: bridge
+
+version: "3.8"
+services:
+#configuracion para postgres
+  dbpostgres:
+    container_name: postgres
+    image: postgres:12.1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORRD=postgres
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  #configuracion para pgadmin
+  pgamin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=josedanielcallefgmail.com
+      - PGADMIN_DEFAULT_PASSWORD=gatoazul
+    ports:
+      - "8090:80"
+volumes:
+  dbdata:
+    driver: local
+
+#Cambiar los datos de heroku-postgres por los del servidor propio
+jdbc:postgresql://ec2-34-194-158-176.compute-1.amazonaws.com:5432/d9egn8oua2g1eg?socketTimeout=3
+#Cambiar los datos de heroku-postgres por los del servidor propio
+jdbc:postgresql://direccion_ip_contenedor_postgres:5432/base_de_datos_creada_con_pgadmin?socketTimeout=3
+
+FROM openjdk:8-alpine
+ADD target/demo-0.0.1-SNAPSHOT.jar /usr/share/app.jar
+ENTRYPOINT ["/usr/bin/java", "-jar", "/usr/share/app.jar"]
+
+docker run -it --rm --name my-maven-project --network red_de_contenedores -v "aqui/va/ruta/del/proyecto/despring":/usr/src/mymaven -w /usr/src/mymaven maven:3.3-jdk-8 mvn clean package
+
+docker run -it --rm --name my-maven-project --network db_default -v /home/optica/deploy/optica/opticabe:/usr/src/mymaven -w /usr/src/mymaven maven:3.3-jdk-8 mvn clean package
+
+docker build -t myapp .
+
+docker run -d --network red_de_los_contenedores -p 8081:8081 myapp
+
+docker network ls
+
+docker ps
+
+
+
